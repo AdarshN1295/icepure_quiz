@@ -1,6 +1,7 @@
+import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { NavMenu } from "@shopify/app-bridge-react";
+import { NavMenu, Provider } from "@shopify/app-bridge-react";
 import Routes from "./Routes";
 
 import { QueryProvider, PolarisProvider } from "./components";
@@ -13,17 +14,29 @@ export default function App() {
   });
   const { t } = useTranslation();
 
+  // Shopify App Bridge config
+  const shopOrigin = new URLSearchParams(window.location.search).get("shop");
+  const apiKey = "7083eb5698cc9c072193e6d9424a1a9b"; // <-- Replace with your actual API key
+
+  const config = {
+    apiKey,
+    shopOrigin,
+    forceRedirect: true,
+  };
+
   return (
-    <PolarisProvider>
-      <BrowserRouter>
-        <QueryProvider>
-          <NavMenu>
-            <a href="/" rel="home" />
-            <a href="/submissions">Submissions</a>
-          </NavMenu>
-          <Routes pages={pages} />
-        </QueryProvider>
-      </BrowserRouter>
-    </PolarisProvider>
+    <Provider config={config}>
+      <PolarisProvider>
+        <BrowserRouter>
+          <QueryProvider>
+            <NavMenu>
+              <a href="/" rel="home" />
+              <a href="/submissions">Submissions</a>
+            </NavMenu>
+            <Routes pages={pages} />
+          </QueryProvider>
+        </BrowserRouter>
+      </PolarisProvider>
+    </Provider>
   );
 }
